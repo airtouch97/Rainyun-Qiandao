@@ -10,6 +10,8 @@ Rainyun-Qiandao-V2 是一个基于 Selenium 和 ddddocr 的雨云自动签到工
 - 支持在本地环境和 GitHub Actions 中运行
 - 集成 ChromeDriver 自动匹配，提高兼容性
 - 详细的日志记录，便于排查问题
+- 支持多账户签到，每个账户独立运行，互不干扰
+- 支持统一通知，汇总所有账户签到结果
 
 ## 技术栈
 - Python 3.9+
@@ -46,6 +48,8 @@ pip install -r requirements.txt
 ### 本地运行
 
 #### 方法一：通过环境变量配置
+
+##### 单账户配置
 ```bash
 # Windows
 export RAINYUN_USER="您的用户名"
@@ -59,6 +63,22 @@ export RAINYUN_PASS="您的密码"
 python rainyun.py
 ```
 
+##### 多账户配置
+支持多行格式，每行一个用户名/密码，数量需匹配：
+
+```bash
+# Windows (PowerShell)
+$env:RAINYUN_USER = "user1\nuser2\nuser3"
+$env:RAINYUN_PASS = "pass1\npass2\npass3"
+
+# Linux/macOS
+export RAINYUN_USER="user1\nuser2\nuser3"
+export RAINYUN_PASS="pass1\npass2\npass3"
+
+# 运行脚本
+python rainyun.py
+```
+
 #### 方法二：通过代码配置（不推荐，存在安全风险）
 修改 `rainyun.py` 中的用户凭据（仅建议本地测试使用）。
 
@@ -67,15 +87,15 @@ python rainyun.py
 1. Fork 本仓库
 2. 进入仓库的 `Settings` > `Secrets and variables` > `Actions`
 3. 添加以下密钥：
-   - `RAINYUN_USER`: 您的雨云用户名
-   - `RAINYUN_PASS`: 您的雨云密码
+   - `RAINYUN_USER`: 您的雨云用户名（支持多行，每行一个用户名）
+   - `RAINYUN_PASS`: 您的雨云密码（支持多行，每行一个密码，需与用户名数量匹配）
 4. 工作流将每天 UTC 4 点（UTC+8 12点）自动运行，也可以手动触发
 
 ## 配置说明
 
 ### 环境变量
-- `RAINYUN_USER`: 雨云用户名（必需）
-- `RAINYUN_PASS`: 雨云密码（必需）
+- `RAINYUN_USER`: 雨云用户名（必需，支持多行，每行一个用户名）
+- `RAINYUN_PASS`: 雨云密码（必需，支持多行，每行一个密码，需与用户名数量匹配）
 - `HEADLESS`: 是否以无头模式运行（true/false，默认false）
 - `DEBUG`: 是否启用调试模式（true/false，默认false）
 - `GITHUB_ACTIONS`: 在 GitHub Actions 环境中自动设置为 true，用于强制无头模式
